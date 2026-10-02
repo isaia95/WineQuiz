@@ -65,6 +65,7 @@
             gap: 10px;
             margin-top: 15px;
         }
+        
         .option-btn {
             background-color: #f1f1f1 !important;
             color: #1A1A1A !important;
@@ -87,6 +88,7 @@
             border-color: var(--primary);
             background-color: #e5e5e5 !important;
         }
+        
         .option-btn.correct:disabled { 
             background-color: var(--success) !important; 
             color: #FFFFFF !important; 
@@ -108,6 +110,7 @@
             opacity: 0.8 !important;
             -webkit-text-fill-color: #777777 !important;
         }
+
         .feedback {
             margin-top: 15px;
             padding: 15px;
@@ -127,8 +130,11 @@
     </style>
 </head>
 <body>
+
 <div class="container">
     <h1>🍷 Quiz Enologico Internazionale</h1>
+
+    <!-- SCHERMATA CONFIGURAZIONE -->
     <div id="setup-screen">
         <div class="form-group">
             <label for="nation-select">Seleziona Nazione:</label>
@@ -138,10 +144,14 @@
                 <option value="FR">Francia</option>
             </select>
         </div>
+
         <div class="form-group">
             <label for="region-select">Zona / Regione:</label>
-            <select id="region-select"><option value="all">Tutte le zone</option></select>
+            <select id="region-select">
+                <option value="all">Tutte le zone</option>
+            </select>
         </div>
+
         <div class="form-group">
             <label for="type-select">Classificazione (Solo Italia):</label>
             <select id="type-select">
@@ -150,6 +160,7 @@
                 <option value="DOC">Solo DOC</option>
             </select>
         </div>
+
         <div class="form-group">
             <label for="length-select">Numero di domande:</label>
             <select id="length-select">
@@ -159,19 +170,28 @@
                 <option value="max">Maratona (Tutte le disponibili)</option>
             </select>
         </div>
+
         <button onclick="startQuiz()">Inizia la Sfida</button>
     </div>
+
+    <!-- SCHERMATA GIOCO -->
     <div id="quiz-screen" class="hidden">
         <div class="score-board">
             <div id="question-number">Domanda 1/10</div>
             <div id="score-display">Punti: 0</div>
         </div>
         <div class="progress-bar"><div id="progress" class="progress"></div></div>
-        <div class="card"><h3 id="question-text">Caricamento domanda...</h3></div>
+
+        <div class="card">
+            <h3 id="question-text">Caricamento domanda...</h3>
+        </div>
+
         <div id="options" class="options-grid"></div>
         <div id="feedback" class="feedback hidden"></div>
         <button id="next-btn" class="hidden" onclick="nextQuestion()">Prossima Domanda</button>
     </div>
+
+    <!-- SCHERMATA FINALE -->
     <div id="end-screen" class="hidden">
         <h2>Sfida Completata! 🍾</h2>
         <p id="final-score" style="font-size: 20px; font-weight: bold;"></p>
@@ -179,8 +199,10 @@
         <button onclick="resetQuiz()">Gioca Ancora</button>
     </div>
 </div>
+
 <script>
 const database = [
+    // --- ITALIA ---
     { name: "Barolo", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Nebbiolo" },
     { name: "Barbaresco", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Nebbiolo" },
     { name: "Gattinara", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Nebbiolo" },
@@ -200,9 +222,9 @@ const database = [
     { name: "Franciacorta", nation: "IT", region: "Lombardia", type: "DOCG", grape: "Chardonnay" },
     { name: "Sforzato di Valtellina", nation: "IT", region: "Lombardia", type: "DOCG", grape: "Nebbiolo (Chiavennasca)" },
     { name: "Oltrepò Pavese Metodo Classico", nation: "IT", region: "Lombardia", type: "DOCG", grape: "Pinot Nero" },
-    { name: "Taurasi", nation: "IT", region: "Campanya", type: "DOCG", grape: "Aglianico" },
-    { name: "Fiano di Avellino", nation: "IT", region: "Campanya", type: "DOCG", grape: "Fiano" },
-    { name: "Greco di Tufo", nation: "IT", region: "Campanya", type: "DOCG", grape: "Greco" },
+    { name: "Taurasi", nation: "IT", region: "Campania", type: "DOCG", grape: "Aglianico" },
+    { name: "Fiano di Avellino", nation: "IT", region: "Campania", type: "DOCG", grape: "Fiano" },
+    { name: "Greco di Tufo", nation: "IT", region: "Campania", type: "DOCG", grape: "Greco" },
     { name: "Vermentino di Gallura", nation: "IT", region: "Sardegna", type: "DOCG", grape: "Vermentino" },
     { name: "Cannonau di Sardegna", nation: "IT", region: "Sardegna", type: "DOC", grape: "Cannonau" },
     { name: "Cerasuolo di Vittoria", nation: "IT", region: "Sicilia", type: "DOCG", grape: "Nero d'Avola" },
@@ -211,184 +233,55 @@ const database = [
     { name: "Primitivo di Manduria Dolce Naturale", nation: "IT", region: "Puglia", type: "DOCG", grape: "Primitivo" },
     { name: "Ghemme", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Nebbiolo" },
     { name: "Sagrantino di Montefalco", nation: "IT", region: "Umbria", type: "DOCG", grape: "Sagrantino" },
-    { name: "Torgiano Rosso Riserva", nation: "IT", region: "Umbria", type: "DOCG", grape: "Sangiovese" },
-    { name: "Castelli di Jesi Verdicchio Riserva", nation: "IT", region: "Marche", type: "DOCG", grape: "Verdicchio" },
-    { name: "Conero Riserva", nation: "IT", region: "Marche", type: "DOCG", grape: "Montepulciano" },
-    { name: "Frascati Superiore", nation: "IT", region: "Lazio", type: "DOCG", grape: "Malvasia Bianca di Candia" },
-    { name: "Albana di Romagna", nation: "IT", region: "Emilia-Romagna", type: "DOCG", grape: "Albana" },
-    { name: "Lambrusco di Sorbara", nation: "IT", region: "Emilia-Romagna", type: "DOC", grape: "Lambrusco" },
-    { name: "Trento DOC", nation: "IT", region: "Trentino-Alto Adige", type: "DOC", grape: "Chardonnay" },
-    { name: "Alto Adige Gewürztraminer", nation: "IT", region: "Trentino-Alto Adige", type: "DOC", grape: "Gewürztraminer" },
-    { name: "Collio Friulano", nation: "IT", region: "Friuli-Venezia Giulia", type: "DOC", grape: "Friulano" },
-    { name: "Ramandolo", nation: "IT", region: "Friuli-Venezia Giulia", type: "DOCG", grape: "Verduzzo Friulano" },
-    { name: "Cinque Terre", nation: "IT", region: "Liguria", type: "DOC", grape: "Bosco" },
-    { name: "Rossese di Dolceacqua", nation: "IT", region: "Liguria", type: "DOC", grape: "Rossese" },
-    { name: "Valle d'Aosta Nebbiolo", nation: "IT", region: "Valle d'Aosta", type: "DOC", grape: "Nebbiolo" },
-    { name: "Biferno", nation: "IT", region: "Molise", type: "DOC", grape: "Montepulciano" },
-    { name: "Cirò Rosso", nation: "IT", region: "Calabria", type: "DOC", grape: "Gaglioppo" },
-    { name: "Margaux", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Cabernet Sauvignon" },
-    { name: "Pauillac", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Cabernet Sauvignon" },
-    { name: "Pomerol", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Merlot" },
-    { name: "Saint-Émilion", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Merlot" },
-    { name: "Sauternes", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Sémillon" },
-    { name: "Chablis", nation: "FR", region: "Borgogna", type: "AOC", grape: "Chardonnay" },
-    { name: "Meursault", nation: "FR", region: "Borgogna", type: "AOC", grape: "Chardonnay" },
-    { name: "Gevrey-Chambertin", nation: "FR", region: "Borgogna", type: "AOC", grape: "Pinot Noir" },
-    { name: "Pommard", nation: "FR", region: "Borgogna", type: "AOC", grape: "Pinot Noir" },
-    { name: "Romanée-Conti", nation: "FR", region: "Borgogna", type: "AOC", grape: "Pinot Noir" },
-    { name: "Champagne Blanc de Blancs", nation: "FR", region: "Champagne", type: "AOC", grape: "Chardonnay" },
-    { name: "Champagne Rosé", nation: "FR", region: "Champagne", type: "AOC", grape: "Pinot Noir" },
-    { name: "Châteauneuf-du-Pape", nation: "FR", region: "Valle del Rodano", type: "AOC", grape: "Grenache" },
-    { name: "Hermitage Rouge", nation: "FR", region: "Valle del Rodano", type: "AOC", grape: "Syrah" },
-    { name: "Condrieu", nation: "FR", region: "Valle del Rodano", type: "AOC", grape: "Viognier" },
-    { name: "Sancerre", nation: "FR", region: "Valle della Loira", type: "AOC", grape: "Sauvignon Blanc" },
-    { name: "Pouilly-Fumé", nation: "FR", region: "Valle della Loira", type: "AOC", grape: "Sauvignon Blanc" },
-    { name: "Vouvray", nation: "FR", region: "Valle della Loira", type: "AOC", grape: "Chenin Blanc" },
-    { name: "Chinon", nation: "FR", region: "Valle della Loira", type: "AOC", grape: "Cabernet Franc" },
-    { name: "Riesling d'Alsace", nation: "FR", region: "Alsazia", type: "AOC", grape: "Riesling" },
-    { name: "Gewurztraminer d'Alsace", nation: "FR", region: "Alsazia", type: "AOC", grape: "Gewürztraminer" },
-    { name: "Cahors", nation: "FR", region: "Sud-Ovest", type: "AOC", grape: "Malbec" }
-];
-const regionsIT = [...new Set(database.filter(d => d.nation === "IT").map(d => d.region))].sort();
-const regionsFR = [...new Set(database.filter(d => d.nation === "FR").map(d => d.region))].sort();
-let quizPool = [];
-let currentQuestionIndex = 0;
-let score = 0;
-let selectedQuestionsCount = 0;
-let currentQuestionObject = {};
-function updateRegions() {
-    const nation = document.getElementById("nation-select").value;
-    const regionSelect = document.getElementById("region-select");
-    const typeSelect = document.getElementById("type-select");
-    regionSelect.innerHTML = '<option value="all">Tutte le zone</option>';
-    if(nation === "FR") {
-        typeSelect.disabled = true;
-        regionsFR.forEach(r => regionSelect.innerHTML += `<option value="${r}">${r}</option>`);
-    } else if(nation === "IT") {
-        typeSelect.disabled = false;
-        regionsIT.forEach(r => regionSelect.innerHTML += `<option value="${r}">${r}</option>`);
-    } else {
-        typeSelect.disabled = false;
-        const allRegions = [...regionsIT, ...regionsFR].sort();
-        allRegions.forEach(r => regionSelect.innerHTML += `<option value="${r}">${r}</option>`);
-    }
+    
+btn.disabled = true;
+if (btn.innerText === correctOpt) btn.classList.add("correct");
+});
+const feedbackDiv = document.getElementById("feedback");
+feedbackDiv.classList.remove("hidden");
+if (selectedOpt === correctOpt) {
+score++;
+selectedBtn.classList.add("correct");
+feedbackDiv.style.backgroundColor = "#D4EFDF";
+feedbackDiv.style.color = "#196F3D";
+feedbackDiv.innerText = "Corretto! Ottimo lavoro.";
+} else {
+selectedBtn.classList.add("wrong");
+feedbackDiv.style.backgroundColor = "#FADBD8";
+feedbackDiv.style.color = "#78281F";
+feedbackDiv.innerText = Sbagliato! La risposta corretta era: ${correctOpt}.;
 }
-function startQuiz() {
-    const nation = document.getElementById("nation-select").value;
-    const region = document.getElementById("region-select").value;
-    const type = document.getElementById("type-select").value;
-    const length = document.getElementById("length-select").value;
-    quizPool = database.filter(item => {
-        if (nation !== "all" && item.nation !== nation) return false;
-        if (region !== "all" && item.region !== region) return false;
-        if (nation === "IT" && type !== "all" && item.type !== type) return false;
-        return true;
-    });
-    if (quizPool.length === 0) {
-        alert("Nessun vino trovato con questi filtri. Cambia i parametri!");
-        return;
-    }
-    quizPool.sort(() => Math.random() - 0.5);
-    if (length === "max" || parseInt(length) > quizPool.length) {
-        selectedQuestionsCount = quizPool.length;
-    } else {
-        selectedQuestionsCount = parseInt(length);
-        quizPool = quizPool.slice(0, selectedQuestionsCount);
-    }
-    currentQuestionIndex = 0;
-    score = 0;
-    document.getElementById("setup-screen").classList.add("hidden");
-    document.getElementById("quiz-screen").classList.remove("hidden");
-    showQuestion();
-}
-function showQuestion() {
-    document.getElementById("feedback").classList.add("hidden");
-    document.getElementById("next-btn").classList.add("hidden");
-    document.getElementById("question-number").innerText = `Domanda ${currentQuestionIndex + 1}/${selectedQuestionsCount}`;
-    document.getElementById("score-display").innerText = `Punti: ${score}`;
-    document.getElementById("progress").style.width = `${(currentQuestionIndex / selectedQuestionsCount) * 100}%`;
-    currentQuestionObject = quizPool[currentQuestionIndex];
-    const questionType = Math.floor(Math.random() * 2);
-    let questionText = "";
-    let correctAnswer = "";
-    let optionsPool = [];
-    if (questionType === 0) {
-        questionText = `Qual è il vitigno principale del vino "${currentQuestionObject.name}" (${currentQuestionObject.region})?`;
-        correctAnswer = currentQuestionObject.grape;
-        optionsPool = [...new Set(database.map(d => d.grape))];
-    } else {
-        questionText = `In quale regione/zona viene prodotto il vino "${currentQuestionObject.name}" (${currentQuestionObject.type || 'AOC'})?`;
-        correctAnswer = currentQuestionObject.region;
-        optionsPool = [...new Set(database.map(d => d.region))];
-    }
-    document.getElementById("question-text").innerText = questionText;
-    optionsPool = optionsPool.filter(o => o !== correctAnswer).sort(() => Math.random() - 0.5);
-    let options = [correctAnswer, optionsPool[0], optionsPool[1], optionsPool[2]];
-    options.sort(() => Math.random() - 0.5);
-    const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = "";
-    options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.innerText = opt;
-        btn.onclick = () => checkAnswer(btn, opt, correctAnswer);
-        optionsDiv.appendChild(btn);
-    });
-}
-function checkAnswer(selectedBtn, selectedOpt, correctOpt) {
-    const buttons = document.querySelectorAll(".option-btn");
-    buttons.forEach(btn => {
-        btn.disabled = true;
-        if (btn.innerText === correctOpt) btn.classList.add("correct");
-    });
-    const feedbackDiv = document.getElementById("feedback");
-    feedbackDiv.classList.remove("hidden");
-    if (selectedOpt === correctOpt) {
-        score++;
-        selectedBtn.classList.add("correct");
-        feedbackDiv.style.backgroundColor = "#D4EFDF";
-        feedbackDiv.style.color = "#196F3D";
-        feedbackDiv.innerText = "Corretto! Ottimo lavoro.";
-    } else {
-        selectedBtn.classList.add("wrong");
-        feedbackDiv.style.backgroundColor = "#FADBD8";
-        feedbackDiv.style.color = "#78281F";
-        feedbackDiv.innerText = `Sbagliato! La risposta corretta era: ${correctOpt}.`;
-    }
-    feedbackDiv.innerHTML += `<br><span style="font-size:14px; font-weight:normal; color:#555;">Scheda tecnica: <strong>${currentQuestionObject.name}</strong> è un vino del territorio di/della <strong>${currentQuestionObject.region}</strong> a base di uva <strong>${currentQuestionObject.grape}</strong>.</span>`;
-    document.getElementById("score-display").innerText = `Punti: ${score}`;
-    document.getElementById("next-btn").classList.remove("hidden");
+feedbackDiv.innerHTML += <br><span style="font-size:14px; font-weight:normal; color:#555;">Scheda tecnica: <strong>${currentQuestionObject.name}</strong> è un vino del territorio di/della <strong>${currentQuestionObject.region}</strong> a base di uva <strong>${currentQuestionObject.grape}</strong>.</span>;
+document.getElementById("score-display").innerText = Punti: ${score};
+document.getElementById("next-btn").classList.remove("hidden");
 }
 function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < selectedQuestionsCount) {
-        showQuestion();
-    } else {
-        showEndScreen();
-    }
+currentQuestionIndex++;
+if (currentQuestionIndex < selectedQuestionsCount) {
+showQuestion();
+} else {
+showEndScreen();
+}
 }
 function showEndScreen() {
-    document.getElementById("quiz-screen").classList.add("hidden");
-    document.getElementById("end-screen").classList.remove("hidden");
-    const finalScorePara = document.getElementById("final-score");
-    const evaluationPara = document.getElementById("evaluation");
-    const percentage = (score / selectedQuestionsCount) * 100;
-    finalScorePara.innerText = `Hai totalizzato ${score} risposte esatte su ${selectedQuestionsCount} (${percentage.toFixed(0)}%)`;
-    if (percentage === 100) {
-        evaluationPara.innerText = "🏆 Sommelier Eccellente! Conosci perfettamente i territori d'Italia e Francia.";
-    } else if (percentage >= 75) {
-        evaluationPara.innerText = "🍷 Ottimo livello! Hai un'ottima cultura enologica.";
-    } else if (percentage >= 50) {
-        evaluationPara.innerText = "🥂 Buona base, ma serve ancora un po' di degustazione e studio sui disciplinari.";
-    } else {
-        evaluationPara.innerText = "🍇 Livello Novizio. Ottima scusa per aprire qualche buona bottiglia e riprovare!";
-    }
+document.getElementById("quiz-screen").classList.add("hidden");
+document.getElementById("end-screen").classList.remove("hidden");
+const finalScorePara = document.getElementById("final-score");
+const evaluationPara = document.getElementById("evaluation");
+const percentage = (score / selectedQuestionsCount) * 100;
+finalScorePara.innerText = Hai totalizzato ${score} risposte esatte su ${selectedQuestionsCount} (${percentage.toFixed(0)}%);
+if (percentage === 100) {
+evaluationPara.innerText = "🏆 Sommelier Eccellente! Conosci perfettamente i territori d'Italia e Francia.";
+} else if (percentage >= 75) {
+evaluationPara.innerText = "🍷 Ottimo livello! Hai un'ottima cultura enologica.";
+} else if (percentage >= 50) {
+evaluationPara.innerText = "🥂 Buona base, ma serve ancora un po' di degustazione e studio sui disciplinari.";
+} else {
+evaluationPara.innerText = "🍇 Livello Novizio. Ottima scusa per aprire qualche buona bottiglia e riprovare!";
+}
 }
 function resetQuiz() {
-    document.getElementById("end-screen").classList.add("hidden");
-    document.getElementById("setup-screen").classList.remove("hidden");
+document.getElementById("end-screen").classList.add("hidden");
+document.getElementById("setup-screen").classList.remove("hidden");
 }
 updateRegions();
-</script>
-</body>
-</html>
