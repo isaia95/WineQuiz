@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Enologico Internazionale: Italia & Francia</title>
+    <title>Quiz Enologico & Distillati dal Mondo</title>
     <style>
         :root {
             --primary: #581845;
@@ -128,14 +128,12 @@
 </head>
 <body>
 <div class="container">
-    <h1>🍷 Quiz Enologico Internazionale</h1>
+    <h1>🍷 Quiz Vini & Distillati dal Mondo 🥃</h1>
     <div id="setup-screen">
         <div class="form-group">
             <label for="nation-select">Seleziona Nazione:</label>
             <select id="nation-select" onchange="updateRegions()">
-                <option value="all">Tutte (Italia & Francia)</option>
-                <option value="IT">Italia</option>
-                <option value="FR">Francia</option>
+                <option value="all">Tutto il Mondo</option>
             </select>
         </div>
         <div class="form-group">
@@ -143,11 +141,13 @@
             <select id="region-select"><option value="all">Tutte le zone</option></select>
         </div>
         <div class="form-group">
-            <label for="type-select">Classificazione (Solo Italia):</label>
+            <label for="type-select">Classificazione / Tipologia:</label>
             <select id="type-select">
-                <option value="all">Tutte (DOC & DOCG)</option>
-                <option value="DOCG">Solo DOCG</option>
-                <option value="DOC">Solo DOC</option>
+                <option value="all">Tutte (Vini & Distillati)</option>
+                <option value="DOCG">Solo DOCG (Italia)</option>
+                <option value="DOC">Solo DOC (Italia)</option>
+                <option value="AOC">Solo AOC (Francia)</option>
+                <option value="Distillato">Solo Distillati</option>
             </select>
         </div>
         <div class="form-group">
@@ -180,151 +180,222 @@
     </div>
 </div>
 <script>
+const countryNames = {
+    "IT": "Italia",
+    "FR": "Francia",
+    "ES": "Spagna",
+    "PT": "Portogallo",
+    "US": "Stati Uniti",
+    "UK": "Scozia / Regno Unito",
+    "MX": "Messico",
+    "AR": "Argentina",
+    "CL": "Cile",
+    "AU": "Australia",
+    "NZ": "Nuova Zelanda",
+    "ZA": "Sudafrica",
+    "HU": "Ungheria",
+    "JP": "Giappone",
+    "MQ": "Martinica",
+    "PE": "Perù"
+};
+
 const database = [
+    // ITALIA - VINI
     { name: "Barolo", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Nebbiolo" },
     { name: "Barbaresco", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Nebbiolo" },
-    { name: "Gattinara", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Nebbiolo" },
-    { name: "Roero Arneis", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Arneis" },
-    { name: "Barbera d'Asti", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Barbera" },
-    { name: "Dogliani", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Dolcetto" },
-    { name: "Gavi", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Cortese" },
     { name: "Brunello di Montalcino", nation: "IT", region: "Toscana", type: "DOCG", grape: "Sangiovese" },
     { name: "Chianti Classico", nation: "IT", region: "Toscana", type: "DOCG", grape: "Sangiovese" },
-    { name: "Vino Nobile di Montepulciano", nation: "IT", region: "Toscana", type: "DOCG", grape: "Sangiovese" },
-    { name: "Vernaccia di San Gimignano", nation: "IT", region: "Toscana", type: "DOCG", grape: "Vernaccia" },
     { name: "Bolgheri Sassicaia", nation: "IT", region: "Toscana", type: "DOC", grape: "Cabernet Sauvignon" },
     { name: "Amarone della Valpolicella", nation: "IT", region: "Veneto", type: "DOCG", grape: "Corvina" },
-    { name: "Soave Superiore", nation: "IT", region: "Veneto", type: "DOCG", grape: "Garganega" },
-    { name: "Conegliano Valdobbiadene Prosecco", nation: "IT", region: "Veneto", type: "DOCG", grape: "Glera" },
-    { name: "Valpolicella Ripasso", nation: "IT", region: "Veneto", type: "DOC", grape: "Corvina" },
     { name: "Franciacorta", nation: "IT", region: "Lombardia", type: "DOCG", grape: "Chardonnay" },
-    { name: "Sforzato di Valtellina", nation: "IT", region: "Lombardia", type: "DOCG", grape: "Nebbiolo (Chiavennasca)" },
     { name: "Oltrepò Pavese Metodo Classico", nation: "IT", region: "Lombardia", type: "DOCG", grape: "Pinot Nero" },
-    { name: "Taurasi", nation: "IT", region: "Campanya", type: "DOCG", grape: "Aglianico" },
-    { name: "Fiano di Avellino", nation: "IT", region: "Campanya", type: "DOCG", grape: "Fiano" },
-    { name: "Greco di Tufo", nation: "IT", region: "Campanya", type: "DOCG", grape: "Greco" },
-    { name: "Vermentino di Gallura", nation: "IT", region: "Sardegna", type: "DOCG", grape: "Vermentino" },
-    { name: "Cannonau di Sardegna", nation: "IT", region: "Sardegna", type: "DOC", grape: "Cannonau" },
-    { name: "Cerasuolo di Vittoria", nation: "IT", region: "Sicilia", type: "DOCG", grape: "Nero d'Avola" },
+    { name: "Sforzato di Valtellina", nation: "IT", region: "Lombardia", type: "DOCG", grape: "Nebbiolo (Chiavennasca)" },
+    { name: "Lugana", nation: "IT", region: "Lombardia/Veneto", type: "DOC", grape: "Trebbiano di Lugana" },
+    { name: "Taurasi", nation: "IT", region: "Campania", type: "DOCG", grape: "Aglianico" },
     { name: "Etna Rosso", nation: "IT", region: "Sicilia", type: "DOC", grape: "Nerello Mascalese" },
-    { name: "Montepulciano d'Abruzzo Colline Teramane", nation: "IT", region: "Abruzzo", type: "DOCG", grape: "Montepulciano" },
-    { name: "Primitivo di Manduria Dolce Naturale", nation: "IT", region: "Puglia", type: "DOCG", grape: "Primitivo" },
-    { name: "Ghemme", nation: "IT", region: "Piemonte", type: "DOCG", grape: "Nebbiolo" },
-    { name: "Sagrantino di Montefalco", nation: "IT", region: "Umbria", type: "DOCG", grape: "Sagrantino" },
-    { name: "Torgiano Rosso Riserva", nation: "IT", region: "Umbria", type: "DOCG", grape: "Sangiovese" },
-    { name: "Castelli di Jesi Verdicchio Riserva", nation: "IT", region: "Marche", type: "DOCG", grape: "Verdicchio" },
-    { name: "Conero Riserva", nation: "IT", region: "Marche", type: "DOCG", grape: "Montepulciano" },
-    { name: "Frascati Superiore", nation: "IT", region: "Lazio", type: "DOCG", grape: "Malvasia Bianca di Candia" },
-    { name: "Albana di Romagna", nation: "IT", region: "Emilia-Romagna", type: "DOCG", grape: "Albana" },
-    { name: "Lambrusco di Sorbara", nation: "IT", region: "Emilia-Romagna", type: "DOC", grape: "Lambrusco" },
+    { name: "Passito di Pantelleria", nation: "IT", region: "Sicilia", type: "DOC", grape: "Zibibbo" },
+    { name: "Vermentino di Gallura", nation: "IT", region: "Sardegna", type: "DOCG", grape: "Vermentino" },
     { name: "Trento DOC", nation: "IT", region: "Trentino-Alto Adige", type: "DOC", grape: "Chardonnay" },
-    { name: "Alto Adige Gewürztraminer", nation: "IT", region: "Trentino-Alto Adige", type: "DOC", grape: "Gewürztraminer" },
-    { name: "Collio Friulano", nation: "IT", region: "Friuli-Venezia Giulia", type: "DOC", grape: "Friulano" },
-    { name: "Ramandolo", nation: "IT", region: "Friuli-Venezia Giulia", type: "DOCG", grape: "Verduzzo Friulano" },
-    { name: "Cinque Terre", nation: "IT", region: "Liguria", type: "DOC", grape: "Bosco" },
-    { name: "Rossese di Dolceacqua", nation: "IT", region: "Liguria", type: "DOC", grape: "Rossese" },
-    { name: "Valle d'Aosta Nebbiolo", nation: "IT", region: "Valle d'Aosta", type: "DOC", grape: "Nebbiolo" },
-    { name: "Biferno", nation: "IT", region: "Molise", type: "DOC", grape: "Montepulciano" },
-    { name: "Cirò Rosso", nation: "IT", region: "Calabria", type: "DOC", grape: "Gaglioppo" },
+
+    // ITALIA - DISTILLATI
+    { name: "Grappa di Amarone", nation: "IT", region: "Veneto", type: "Distillato", grape: "Vinacce di Corvina" },
+    { name: "Grappa di Moscato", nation: "IT", region: "Piemonte", type: "Distillato", grape: "Vinacce di Moscato" },
+
+    // FRANCIA - VINI
     { name: "Margaux", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Cabernet Sauvignon" },
-    { name: "Pauillac", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Cabernet Sauvignon" },
     { name: "Pomerol", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Merlot" },
-    { name: "Saint-Émilion", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Merlot" },
     { name: "Sauternes", nation: "FR", region: "Bordeaux", type: "AOC", grape: "Sémillon" },
     { name: "Chablis", nation: "FR", region: "Borgogna", type: "AOC", grape: "Chardonnay" },
-    { name: "Meursault", nation: "FR", region: "Borgogna", type: "AOC", grape: "Chardonnay" },
-    { name: "Gevrey-Chambertin", nation: "FR", region: "Borgogna", type: "AOC", grape: "Pinot Noir" },
-    { name: "Pommard", nation: "FR", region: "Borgogna", type: "AOC", grape: "Pinot Noir" },
     { name: "Romanée-Conti", nation: "FR", region: "Borgogna", type: "AOC", grape: "Pinot Noir" },
     { name: "Champagne Blanc de Blancs", nation: "FR", region: "Champagne", type: "AOC", grape: "Chardonnay" },
-    { name: "Champagne Rosé", nation: "FR", region: "Champagne", type: "AOC", grape: "Pinot Noir" },
     { name: "Châteauneuf-du-Pape", nation: "FR", region: "Valle del Rodano", type: "AOC", grape: "Grenache" },
-    { name: "Hermitage Rouge", nation: "FR", region: "Valle del Rodano", type: "AOC", grape: "Syrah" },
-    { name: "Condrieu", nation: "FR", region: "Valle del Rodano", type: "AOC", grape: "Viognier" },
     { name: "Sancerre", nation: "FR", region: "Valle della Loira", type: "AOC", grape: "Sauvignon Blanc" },
-    { name: "Pouilly-Fumé", nation: "FR", region: "Valle della Loira", type: "AOC", grape: "Sauvignon Blanc" },
-    { name: "Vouvray", nation: "FR", region: "Valle della Loira", type: "AOC", grape: "Chenin Blanc" },
-    { name: "Chinon", nation: "FR", region: "Valle della Loira", type: "AOC", grape: "Cabernet Franc" },
-    { name: "Riesling d'Alsace", nation: "FR", region: "Alsazia", type: "AOC", grape: "Riesling" },
-    { name: "Gewurztraminer d'Alsace", nation: "FR", region: "Alsazia", type: "AOC", grape: "Gewürztraminer" },
-    { name: "Cahors", nation: "FR", region: "Sud-Ovest", type: "AOC", grape: "Malbec" }
+
+    // FRANCIA - DISTILLATI
+    { name: "Cognac", nation: "FR", region: "Charente", type: "Distillato", grape: "Ugni Blanc (Trebbiano)" },
+    { name: "Bas-Armagnac", nation: "FR", region: "Guascogna", type: "Distillato", grape: "Ugni Blanc / Baco" },
+    { name: "Calvados", nation: "FR", region: "Normandia", type: "Distillato", grape: "Mele da sidro" },
+
+    // SPAGNA
+    { name: "Rioja Gran Reserva", nation: "ES", region: "La Rioja", type: "DOCa", grape: "Tempranillo" },
+    { name: "Priorat", nation: "ES", region: "Catalogna", type: "DOQ", grape: "Garnacha" },
+    { name: "Jerez / Sherry", nation: "ES", region: "Andalusia", type: "DO", grape: "Palomino" },
+    { name: "Cava", nation: "ES", region: "Penedès", type: "DO", grape: "Macabeo / Xarel-lo" },
+
+    // PORTOGALLO
+    { name: "Porto Vintage", nation: "PT", region: "Valle del Douro", type: "DOC", grape: "Touriga Nacional" },
+    { name: "Madeira", nation: "PT", region: "Isola di Madeira", type: "DOP", grape: "Tinta Negra / Sercial" },
+
+    // STATI UNITI
+    { name: "Napa Valley Cabernet", nation: "US", region: "California", type: "AVA", grape: "Cabernet Sauvignon" },
+    { name: "Bourbon Whiskey", nation: "US", region: "Kentucky", type: "Distillato", grape: "Mais (minimo 51%)" },
+    { name: "Tennessee Whiskey", nation: "US", region: "Tennessee", type: "Distillato", grape: "Mais / Filtrato su carboni d'acero" },
+
+    // SCOZIA / REGNO UNITO
+    { name: "Scotch Whisky (Islay Single Malt)", nation: "UK", region: "Islay (Scozia)", type: "Distillato", grape: "Orzo maltato torbato" },
+    { name: "Scotch Whisky (Speyside Single Malt)", nation: "UK", region: "Speyside (Scozia)", type: "Distillato", grape: "Orzo maltato" },
+
+    // MESSICO
+    { name: "Tequila 100% Agave", nation: "MX", region: "Jalisco", type: "Distillato", grape: "Agave Blu (Tequilana Weber)" },
+    { name: "Mezcal Artesanal", nation: "MX", region: "Oaxaca", type: "Distillato", grape: "Agave Espadín / Agavi selvatiche" },
+
+    // SUD AMERICA
+    { name: "Mendoza Malbec", nation: "AR", region: "Mendoza", type: "GI", grape: "Malbec" },
+    { name: "Casablanca Carmenère", nation: "CL", region: "Valle de Colchagua", type: "DO", grape: "Carmenère" },
+    { name: "Pisco", nation: "PE", region: "Ica", type: "DOC", grape: "Uva Quebranta" },
+
+    // OCEANIA & SUDAFRICA
+    { name: "Barossa Valley Shiraz", nation: "AU", region: "South Australia", type: "GI", grape: "Shiraz" },
+    { name: "Marlborough Sauvignon Blanc", nation: "NZ", region: "Marlborough", type: "GI", grape: "Sauvignon Blanc" },
+    { name: "Stellenbosch Pinotage", nation: "ZA", region: "Stellenbosch", type: "WO", grape: "Pinotage" },
+
+    // UNGHERIA, GIAPPONE & CARAIBI
+    { name: "Tokaji Aszú", nation: "HU", region: "Tokaj", type: "PDO", grape: "Furmint" },
+    { name: "Sake Junmai Daiginjo", nation: "JP", region: "Giappone", type: "Fermentato", grape: "Riso Sakamai" },
+    { name: "Japanese Whisky", nation: "JP", region: "Yamazaki / Yoichi", type: "Distillato", grape: "Orzo maltato" },
+    { name: "Rhum Agricole", nation: "MQ", region: "Martinica", type: "AOC", grape: "Succo fresco di Canna da Zucchero" }
 ];
-const regionsIT = [...new Set(database.filter(d => d.nation === "IT").map(d => d.region))].sort();
-const regionsFR = [...new Set(database.filter(d => d.nation === "FR").map(d => d.region))].sort();
+
 let quizPool = [];
 let currentQuestionIndex = 0;
 let score = 0;
 let selectedQuestionsCount = 0;
 let currentQuestionObject = {};
+
+function initNations() {
+    const nationSelect = document.getElementById("nation-select");
+    const nationsInDb = [...new Set(database.map(d => d.nation))].sort();
+    
+    nationsInDb.forEach(code => {
+        const name = countryNames[code] || code;
+        const option = document.createElement("option");
+        option.value = code;
+        option.textContent = name;
+        nationSelect.appendChild(option);
+    });
+}
+
 function updateRegions() {
     const nation = document.getElementById("nation-select").value;
     const regionSelect = document.getElementById("region-select");
     const typeSelect = document.getElementById("type-select");
+    
     regionSelect.innerHTML = '<option value="all">Tutte le zone</option>';
-    if(nation === "FR") {
-        typeSelect.disabled = true;
-        regionsFR.forEach(r => regionSelect.innerHTML += `<option value="${r}">${r}</option>`);
-    } else if(nation === "IT") {
-        typeSelect.disabled = false;
-        regionsIT.forEach(r => regionSelect.innerHTML += `<option value="${r}">${r}</option>`);
-    } else {
-        typeSelect.disabled = false;
-        const allRegions = [...regionsIT, ...regionsFR].sort();
-        allRegions.forEach(r => regionSelect.innerHTML += `<option value="${r}">${r}</option>`);
+    
+    let filteredDb = database;
+    if (nation !== "all") {
+        filteredDb = database.filter(d => d.nation === nation);
+    }
+    
+    const availableRegions = [...new Set(filteredDb.map(d => d.region))].sort();
+    availableRegions.forEach(r => {
+        regionSelect.innerHTML += `<option value="${r}">${r}</option>`;
+    });
+
+    if (nation !== "IT" && nation !== "all") {
+        typeSelect.value = "all";
     }
 }
+
 function startQuiz() {
     const nation = document.getElementById("nation-select").value;
     const region = document.getElementById("region-select").value;
     const type = document.getElementById("type-select").value;
     const length = document.getElementById("length-select").value;
+    
     quizPool = database.filter(item => {
         if (nation !== "all" && item.nation !== nation) return false;
         if (region !== "all" && item.region !== region) return false;
-        if (nation === "IT" && type !== "all" && item.type !== type) return false;
+        if (type !== "all" && item.type !== type) return false;
         return true;
     });
+
     if (quizPool.length === 0) {
-        alert("Nessun vino trovato con questi filtri. Cambia i parametri!");
+        alert("Nessun prodotto trovato con questi filtri. Cambia i parametri!");
         return;
     }
+
     quizPool.sort(() => Math.random() - 0.5);
+    
     if (length === "max" || parseInt(length) > quizPool.length) {
         selectedQuestionsCount = quizPool.length;
     } else {
         selectedQuestionsCount = parseInt(length);
         quizPool = quizPool.slice(0, selectedQuestionsCount);
     }
+
     currentQuestionIndex = 0;
     score = 0;
     document.getElementById("setup-screen").classList.add("hidden");
     document.getElementById("quiz-screen").classList.remove("hidden");
     showQuestion();
 }
+
 function showQuestion() {
     document.getElementById("feedback").classList.add("hidden");
     document.getElementById("next-btn").classList.add("hidden");
     document.getElementById("question-number").innerText = `Domanda ${currentQuestionIndex + 1}/${selectedQuestionsCount}`;
     document.getElementById("score-display").innerText = `Punti: ${score}`;
     document.getElementById("progress").style.width = `${(currentQuestionIndex / selectedQuestionsCount) * 100}%`;
+    
     currentQuestionObject = quizPool[currentQuestionIndex];
     const questionType = Math.floor(Math.random() * 2);
     let questionText = "";
     let correctAnswer = "";
     let optionsPool = [];
+
+    const isDistillate = currentQuestionObject.type === "Distillato" || currentQuestionObject.type === "Fermentato";
+    const rawMaterialLabel = isDistillate ? "materia prima / ingrediente base" : "vitigno principale";
+
     if (questionType === 0) {
-        questionText = `Qual è il vitigno principale del vino "${currentQuestionObject.name}" (${currentQuestionObject.region})?`;
+        questionText = `Qual è il ${rawMaterialLabel} del prodotto "${currentQuestionObject.name}" (${currentQuestionObject.region})?`;
         correctAnswer = currentQuestionObject.grape;
-        optionsPool = [...new Set(database.map(d => d.grape))];
+        
+        // Cerca distrattori della stessa nazione
+        optionsPool = [...new Set(database.filter(d => d.nation === currentQuestionObject.nation).map(d => d.grape))];
+        
+        // Fallback: se la nazione ha meno di 4 opzioni, attinge dall'intero database
+        if (optionsPool.length < 4) {
+            optionsPool = [...new Set(database.map(d => d.grape))];
+        }
     } else {
-        questionText = `In quale regione/zona viene prodotto il vino "${currentQuestionObject.name}" (${currentQuestionObject.type || 'AOC'})?`;
+        questionText = `In quale regione/zona si produce "${currentQuestionObject.name}" (${currentQuestionObject.type})?`;
         correctAnswer = currentQuestionObject.region;
-        optionsPool = [...new Set(database.map(d => d.region))];
+        
+        optionsPool = [...new Set(database.filter(d => d.nation === currentQuestionObject.nation).map(d => d.region))];
+        
+        if (optionsPool.length < 4) {
+            optionsPool = [...new Set(database.map(d => d.region))];
+        }
     }
+    
     document.getElementById("question-text").innerText = questionText;
+    
     optionsPool = optionsPool.filter(o => o !== correctAnswer).sort(() => Math.random() - 0.5);
+    
     let options = [correctAnswer, optionsPool[0], optionsPool[1], optionsPool[2]];
     options.sort(() => Math.random() - 0.5);
+    
     const optionsDiv = document.getElementById("options");
     optionsDiv.innerHTML = "";
     options.forEach(opt => {
@@ -335,14 +406,17 @@ function showQuestion() {
         optionsDiv.appendChild(btn);
     });
 }
+
 function checkAnswer(selectedBtn, selectedOpt, correctOpt) {
     const buttons = document.querySelectorAll(".option-btn");
     buttons.forEach(btn => {
         btn.disabled = true;
         if (btn.innerText === correctOpt) btn.classList.add("correct");
     });
+
     const feedbackDiv = document.getElementById("feedback");
     feedbackDiv.classList.remove("hidden");
+    
     if (selectedOpt === correctOpt) {
         score++;
         selectedBtn.classList.add("correct");
@@ -355,10 +429,13 @@ function checkAnswer(selectedBtn, selectedOpt, correctOpt) {
         feedbackDiv.style.color = "#78281F";
         feedbackDiv.innerText = `Sbagliato! La risposta corretta era: ${correctOpt}.`;
     }
-    feedbackDiv.innerHTML += `<br><span style="font-size:14px; font-weight:normal; color:#555;">Scheda tecnica: <strong>${currentQuestionObject.name}</strong> è un vino del territorio di/della <strong>${currentQuestionObject.region}</strong> a base di uva <strong>${currentQuestionObject.grape}</strong>.</span>`;
+    
+    feedbackDiv.innerHTML += `<br><span style="font-size:14px; font-weight:normal; color:#555;">Scheda: <strong>${currentQuestionObject.name}</strong> (${countryNames[currentQuestionObject.nation] || currentQuestionObject.nation}) - Zona: <strong>${currentQuestionObject.region}</strong> - Base: <strong>${currentQuestionObject.grape}</strong>.</span>`;
+    
     document.getElementById("score-display").innerText = `Punti: ${score}`;
     document.getElementById("next-btn").classList.remove("hidden");
 }
+
 function nextQuestion() {
     currentQuestionIndex++;
     if (currentQuestionIndex < selectedQuestionsCount) {
@@ -367,27 +444,35 @@ function nextQuestion() {
         showEndScreen();
     }
 }
+
 function showEndScreen() {
     document.getElementById("quiz-screen").classList.add("hidden");
     document.getElementById("end-screen").classList.remove("hidden");
+    
     const finalScorePara = document.getElementById("final-score");
     const evaluationPara = document.getElementById("evaluation");
     const percentage = (score / selectedQuestionsCount) * 100;
+    
     finalScorePara.innerText = `Hai totalizzato ${score} risposte esatte su ${selectedQuestionsCount} (${percentage.toFixed(0)}%)`;
+    
     if (percentage === 100) {
-        evaluationPara.innerText = "🏆 Sommelier Eccellente! Conosci perfettamente i territori d'Italia e Francia.";
+        evaluationPara.innerText = "🏆 Esperto Globale! Conosci perfettamente vini e distillati di tutto il mondo.";
     } else if (percentage >= 75) {
-        evaluationPara.innerText = "🍷 Ottimo livello! Hai un'ottima cultura enologica.";
+        evaluationPara.innerText = "🍷 Conoscitore Internazionale! Ottima cultura enologica e di distillazione.";
     } else if (percentage >= 50) {
-        evaluationPara.innerText = "🥂 Buona base, ma serve ancora un po' di degustazione e studio sui disciplinari.";
+        evaluationPara.innerText = "🥂 Buona base! Qualche ripasso sulle zone geografiche ti renderà imbattibile.";
     } else {
-        evaluationPara.innerText = "🍇 Livello Novizio. Ottima scusa per aprire qualche buona bottiglia e riprovare!";
+        evaluationPara.innerText = "🍇 Livello Apprendista. Una fantastica scusa per viaggiare e degustare di più!";
     }
 }
+
 function resetQuiz() {
     document.getElementById("end-screen").classList.add("hidden");
     document.getElementById("setup-screen").classList.remove("hidden");
 }
+
+// Inizializzazione
+initNations();
 updateRegions();
 </script>
 </body>
